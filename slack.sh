@@ -2,7 +2,6 @@
 # Script to check for, download, and install Slack.
 
 dmgfile="slack.dmg"
-volname="Slack"
 logfile="/Library/Logs/SlackInstallScript.log"
 slack_path="/Applications/Slack.app"
 url="https://slack.com/ssb/download-osx-silicon"
@@ -19,17 +18,25 @@ fi
 
 # Mount the installer disk image
 /bin/echo "$(date): Mounting installer disk image." >> ${logfile}
-/usr/bin/hdiutil attach /tmp/${dmgfile} -nobrowse -quiet
+mount_output=$(/usr/bin/hdiutil attach /tmp/${dmgfile} -nobrowse -quiet)
+mount_point=$(echo "$mount_output" | grep -o '/Volumes/[^ ]*')
+
+# Check if the mount was successful
+if [ -z "$mount_point" ]; then
+    /bin/echo "$(date): Failed to mount the disk image." >> ${logfile}
+    /bin/rm /tmp/${dmgfile}
+    exit 1
+fi
 
 # Install Slack
-/bin/echo "$(date): Installing Slack." >> ${logfile}
-ditto -rsrc "/Volumes/${volname}/Slack.app" "${slack_path}"
+/bin/echo "$(date): Installing Slack from $mount_point." >> ${logfile}
+ditto -rsrc "$mount_point/Slack.app" "${slack_path}"
 
 /bin/sleep 10
 
 # Unmount the installer disk image
 /bin/echo "$(date): Unmounting installer disk image." >> ${logfile}
-/usr/bin/hdiutil detach $(/bin/df | /usr/bin/grep "${volname}" | awk '{print $1}') -quiet
+/usr/bin/hdiutil detach "$mount_point" -quiet
 
 /bin/sleep 10
 
