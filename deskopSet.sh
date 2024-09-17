@@ -20,12 +20,6 @@ log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
 }
 
-# Check if the script is running as root and exit if true
-if [ "$EUID" -eq 0 ]; then
-    log "This script should not be run as root or with sudo. Please run it as a regular user."
-    exit 1
-fi
-
 # Function to install Homebrew if it is not installed
 install_homebrew() {
     if ! command -v brew &> /dev/null; then
