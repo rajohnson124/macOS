@@ -1,20 +1,5 @@
 #!/bin/bash
 
-<< ABOUT_THIS_SCRIPT
------------------------------------------------------------------------
-	Written by: Adam Martin
-	@adammartin on MacAdmins Slack
-
-	Created: February 11, 2020
-    Updated: April 21, 2020
-	Purpose: Downloads and installs the latest available Zoom
-	app specified directly on the client. This avoids having to
-	manually download and store an up-to-date installer on a
-	distribution server every month.
-
------------------------------------------------------------------------
-ABOUT_THIS_SCRIPT
-
 # this is the full URL
 url="https://zoom.us/client/latest/ZoomInstallerIT.pkg"
 
