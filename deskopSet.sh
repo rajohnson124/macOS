@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to install Homebrew, desktoppr, and set a random desktop background on macOS.
-# Author: Your Name
+# Script to check for desktoppr and set a random desktop background on macOS.
+# Author: Ryan Johnson
 # Date: 2024-09-17
 
 # Define an array of URLs for the images
@@ -20,48 +20,20 @@ log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
 }
 
-# Function to install Homebrew if it is not installed
-install_homebrew() {
-    if ! command -v brew &> /dev/null; then
-        log "Homebrew is not installed. Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" >/dev/null 2>&1
-        
-        # Validate installation
-        if command -v brew &> /dev/null; then
-            log "Homebrew installed successfully."
-        else
-            log "Failed to install Homebrew. Exiting."
-            exit 1
-        fi
+# Function to check if desktoppr exists at the specified path
+check_desktoppr() {
+    if [ -x "$DESKTOPPR_PATH" ]; then
+        log "desktoppr is found at $DESKTOPPR_PATH."
     else
-        log "Homebrew is already installed."
-    fi
-}
-
-# Function to install desktoppr using Homebrew
-install_desktoppr() {
-    if ! command -v $DESKTOPPR_PATH &> /dev/null; then
-        log "desktoppr is not installed. Installing desktoppr..."
-        # Update Homebrew and install desktoppr
-        brew update >/dev/null 2>&1
-        brew install --cask desktoppr >/dev/null 2>&1
-        
-        # Validate installation
-        if command -v $DESKTOPPR_PATH &> /dev/null; then
-            log "desktoppr installed successfully."
-        else
-            log "Failed to install desktoppr. Exiting."
-            exit 1
-        fi
-    else
-        log "desktoppr is already installed."
+        log "desktoppr is not found at $DESKTOPPR_PATH. Please ensure it is installed correctly."
+        exit 1
     fi
 }
 
 # Function to set the desktop background using desktoppr
 set_background() {
     # Select a random URL from the array
-    RANDOM_URL=${IMAGE_URLS[$RANDOM % ${#IMAGE_URLS[@]}]}
+    RANDOM_URL=${IMAGE_URLS[$RANDOM % ${#IMAGE_URLS[@]})}
     
     log "Setting the desktop background to the image from the URL: $RANDOM_URL"
     $DESKTOPPR_PATH "$RANDOM_URL" >/dev/null 2>&1
@@ -77,8 +49,7 @@ set_background() {
 
 # Main script execution
 log "Starting the background setter script."
-install_homebrew
-install_desktoppr
+check_desktoppr
 set_background
 log "Script completed successfully."
 
