@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to check for desktoppr and set a random desktop background on macOS.
-# Author: Ryan Johnson
+# Author: Your Name
 # Date: 2024-09-17
 
 # Define an array of URLs for the images
@@ -33,7 +33,7 @@ check_desktoppr() {
 # Function to set the desktop background using desktoppr
 set_background() {
     # Select a random URL from the array
-    RANDOM_URL=${IMAGE_URLS[$RANDOM % ${#IMAGE_URLS[@]})}
+    RANDOM_URL=${IMAGE_URLS[RANDOM % ${#IMAGE_URLS[@]}]}
     
     log "Setting the desktop background to the image from the URL: $RANDOM_URL"
     $DESKTOPPR_PATH "$RANDOM_URL" >/dev/null 2>&1
