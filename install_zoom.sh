@@ -1,18 +1,30 @@
 #!/bin/bash
+# Script to check for, download, and install Zoom.
 
-# this is the full URL
+# Full URL of the Zoom installer
 url="https://zoom.us/client/latest/ZoomInstallerIT.pkg"
+logfile="/Library/Logs/ZoomInstallScript.log"
+zoom_path="/Applications/zoom.us.app"
 
-# change directory to /private/tmp to make this the working directory
+# Change directory to /private/tmp to make this the working directory
 cd /private/tmp/
 
-# download the installer package and name it for the linkID
+# Check if Zoom is already installed
+if [ -d "${zoom_path}" ]; then
+    /bin/echo "$(date): Zoom is already installed." >> ${logfile}
+    exit 0
+fi
+
+# Download the installer package
+/bin/echo "$(date): Downloading Zoom installer." >> ${logfile}
 /usr/bin/curl -JL "$url" -o "ZoomInstallerIT.pkg"
 
-# install the package
+# Install the package
+/bin/echo "$(date): Installing Zoom." >> ${logfile}
 /usr/sbin/installer -pkg "ZoomInstallerIT.pkg" -target /
 
-# remove the installer package when done
+# Remove the installer package when done
+/bin/echo "$(date): Deleting installer package." >> ${logfile}
 /bin/rm -f "ZoomInstallerIT.pkg"
 
 exit 0
