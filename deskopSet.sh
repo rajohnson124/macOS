@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to check for desktoppr and set a random desktop background on macOS.
-# Author: Your Name
+# Author: Ryan Johnson
 # Date: 2024-09-17
 
 # Define an array of URLs for the images
@@ -20,6 +20,15 @@ log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
 }
 
+# Get the currently logged-in user
+loggedInUser=$(echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ { print $3 }')
+
+# Check if a user is logged in
+if [ "$loggedInUser" == "loginwindow" ] || [ -z "$loggedInUser" ]; then
+    log "No logged-in user detected. Exiting."
+    exit 1
+fi
+
 # Function to check if desktoppr exists at the specified path
 check_desktoppr() {
     if [ -x "$DESKTOPPR_PATH" ]; then
@@ -36,11 +45,13 @@ set_background() {
     RANDOM_URL=${IMAGE_URLS[RANDOM % ${#IMAGE_URLS[@]}]}
     
     log "Setting the desktop background to the image from the URL: $RANDOM_URL"
-    $DESKTOPPR_PATH "$RANDOM_URL" >/dev/null 2>&1
+    
+    # Run desktoppr as the logged-in user
+    sudo -u "$loggedInUser" "$DESKTOPPR_PATH" "$RANDOM_URL" >/dev/null 2>&1
     
     # Validate background change
     if [ $? -eq 0 ]; then
-        log "Desktop background successfully updated."
+        log "Desktop background successfully updated for $loggedInUser."
     else
         log "Failed to set the desktop background."
         exit 1
